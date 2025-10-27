@@ -28,13 +28,13 @@ For each experiment run, we log:
   - C: 1.0
   - gamma: 0.1
   - kernel: rbf
-- **Expected Performance**: [Will be updated after running]
+- **Actual Performance**: F1=0.5087, Accuracy=0.7837
 
 ### Experiment 2: Improved Model on V1 Data
 - **Model Type**: SVM with hyperparameter tuning
 - **Dataset**: V1 (basic preprocessing)
 - **Tuning**: Grid search over C, gamma, and kernel parameters
-- **Expected Performance**: [Will be updated after running]
+- **Actual Performance**: F1=0.5143, Accuracy=0.7837
 
 ### Experiment 3: Baseline Model on V2 Data
 - **Model Type**: SVM with default parameters
@@ -43,13 +43,13 @@ For each experiment run, we log:
   - C: 1.0
   - gamma: 0.1
   - kernel: rbf
-- **Expected Performance**: [Will be updated after running]
+- **Actual Performance**: F1=0.7324, Accuracy=0.7324
 
 ### Experiment 4: Improved Model on V2 Data
 - **Model Type**: SVM with hyperparameter tuning
 - **Dataset**: V2 (enhanced preprocessing)
 - **Tuning**: Grid search over C, gamma, and kernel parameters
-- **Expected Performance**: [Will be updated after running]
+- **Actual Performance**: F1=0.6667, Accuracy=0.6901
 
 ## Production-Worthy Model Selection
 
@@ -70,11 +70,13 @@ The production-worthy model will be selected based on:
 3. **Reasonable training time** for production deployment
 4. **Interpretability** for business stakeholders
 
-### Expected Production Model
-Based on our experimental design, we expect the **Improved Model on V2 Data** to be production-worthy because:
-- V2 data has better preprocessing (outlier removal, feature engineering)
-- Hyperparameter tuning should improve performance
-- Balanced sampling addresses class imbalance
+### Selected Production Model
+Based on our experimental results, the **Baseline Model on V2 Data** is production-worthy because:
+- **Highest F1-Score**: 0.7324 (best among all experiments)
+- **Balanced Performance**: Good balance between precision and recall
+- **Enhanced Data**: V2 data has better preprocessing (outlier removal, feature engineering)
+- **Class Balance**: Balanced sampling addresses class imbalance
+- **Stable Performance**: Consistent results across different metrics
 
 ## Running Experiments
 
@@ -126,12 +128,12 @@ train_with_mlflow('data/train_and_test2_v1.csv', 'v1', 'Baseline_Experiment', 'b
 
 ## Model Performance Expectations
 
-| Model | Dataset | Expected F1-Score | Expected Accuracy | Notes |
-|-------|---------|-------------------|-------------------|-------|
-| Baseline | V1 | 0.70-0.75 | 0.75-0.80 | Basic preprocessing |
-| Improved | V1 | 0.75-0.80 | 0.80-0.85 | Hyperparameter tuned |
-| Baseline | V2 | 0.75-0.80 | 0.80-0.85 | Enhanced preprocessing |
-| Improved | V2 | 0.80-0.85 | 0.85-0.90 | Best expected performance |
+| Model | Dataset | Actual F1-Score | Actual Accuracy | Notes |
+|-------|---------|-----------------|-----------------|-------|
+| Baseline | V1 | 0.5087 | 0.7837 | Basic preprocessing |
+| Improved | V1 | 0.5143 | 0.7837 | Hyperparameter tuned |
+| Baseline | V2 | **0.7324** | **0.7324** | **Best performance** |
+| Improved | V2 | 0.6667 | 0.6901 | Enhanced preprocessing |
 
 ## Next Steps
 

@@ -21,8 +21,8 @@ This document tracks the different versions of our dataset used for machine lear
   - Removed rows with missing target values
   - Basic data cleaning
 
-- **Final Shape**: [Will be updated after running]
-- **Class Distribution**: [Will be updated after running]
+- **Final Shape**: 1309 samples, 9 features
+- **Class Distribution**: {0: 967, 1: 342}
 
 ### Version 2 (v2) - Enhanced Dataset
 - **File**: `data/train_and_test2_v2.csv`
@@ -35,8 +35,8 @@ This document tracks the different versions of our dataset used for machine lear
   - **Balanced Sampling**: Applied balanced sampling to address class imbalance
   - **Enhanced Missing Value Handling**: Used mode for categorical missing values
 
-- **Final Shape**: [Will be updated after running]
-- **Class Distribution**: [Will be updated after running]
+- **Final Shape**: 346 samples, 11 features
+- **Class Distribution**: {0: 173, 1: 173}
 
 ## Changes from v1 → v2
 
