@@ -6,7 +6,7 @@ This document tracks our machine learning experiments using MLflow, including ba
 ## Experiment Setup
 
 ### MLflow Configuration
-- **Tracking URI**: `file:///tmp/mlruns` (local file backend)
+- **Tracking URI**: `https://dagshub.com/whitecaptain2003/LastPro.mlflow/` (DAGsHub remote backend)
 - **Experiments**:
   - `Baseline_Experiment`: Baseline SVM models
   - `Improved_Experiment`: Hyperparameter-tuned models
@@ -88,9 +88,9 @@ python train_with_mlops.py
 
 ### Command to View MLflow UI
 ```bash
-mlflow ui
+# View experiments on DAGsHub
+# Open: https://dagshub.com/whitecaptain2003/LastPro.mlflow/
 ```
-Then open http://localhost:5000 in your browser.
 
 ### Individual Experiment Commands
 ```bash
@@ -153,12 +153,12 @@ train_with_mlflow('data/train_and_test2_v1.csv', 'v1', 'Baseline_Experiment', 'b
 
 ### Debug Commands
 ```bash
-# Check MLflow runs
-ls -la /tmp/mlruns/
-
 # Check DVC status
 dvc status
 
 # Check data files
 ls -la data/
+
+# View experiments on DAGsHub
+# Open: https://dagshub.com/whitecaptain2003/LastPro.mlflow/
 ```
