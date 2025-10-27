@@ -130,9 +130,13 @@ def main():
     # 从环境变量读取配置
     secret_key = os.getenv('MY_SECRET_KEY', 'default_secret')
     data_path = os.getenv('DATA_PATH', 'data/train_and_test2.csv')
+
+    model_name = os.getenv('MODEL_NAME', 'SVM')
     
     print(f"Using secret key: {secret_key}")
     print(f"Data path: {data_path}")
+    print(f"Model name: {model_name}")
+
     
     # 读取数据集
     df = pd.read_csv(data_path, encoding='utf-8')
