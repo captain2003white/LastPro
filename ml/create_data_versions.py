@@ -111,10 +111,10 @@ def create_v2_dataset(input_path, output_path):
 
 def main():
     """Main function to create both dataset versions"""
-    # Paths
-    original_data = "../data/train_and_test2.csv"
-    v1_path = "../data/train_and_test2_v1.csv"
-    v2_path = "../data/train_and_test2_v2.csv"
+    # Paths - 使用相对于项目根目录的路径
+    original_data = "data/train_and_test2.csv"
+    v1_path = "data/train_and_test2_v1.csv"
+    v2_path = "data/train_and_test2_v2.csv"
     
     print("=" * 50)
     print("Creating Dataset Versions for MLOps")

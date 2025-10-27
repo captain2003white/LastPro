@@ -21,6 +21,7 @@ import mlflow
 import mlflow.sklearn
 import warnings
 from dotenv import load_dotenv
+import dagshub
 
 warnings.filterwarnings('ignore')
 
@@ -174,8 +175,11 @@ def train_improved_model(X, y, test_size=0.3, random_state=42):
 def train_with_mlflow(data_path, data_version, experiment_name, model_type="baseline"):
     """Train model with MLflow tracking"""
     
-    # Set MLflow tracking URI
-    mlflow.set_tracking_uri("file:///tmp/mlruns")
+    # Initialize DAGsHub integration
+    dagshub.init(repo_owner='whitecaptain2003', repo_name='LastPro', mlflow=True)
+    
+    # Set MLflow tracking URI to DAGsHub remote
+    mlflow.set_tracking_uri("https://dagshub.com/whitecaptain2003/LastPro.mlflow/")
     mlflow.set_experiment(experiment_name)
     
     # Get version information
@@ -215,26 +219,85 @@ def train_with_mlflow(data_path, data_version, experiment_name, model_type="base
         mlflow.log_metric("test_samples", len(y_test))
         mlflow.log_metric("train_samples", len(X) - len(y_test))
         
-        # Log model
-        mlflow.sklearn.log_model(model, "model")
+        # Log model using pickle (more compatible with DAGsHub)
+        try:
+            import pickle
+            import tempfile
+            
+            # Save model as pickle file
+            with tempfile.NamedTemporaryFile(mode='wb', suffix='.pkl', delete=False) as f:
+                pickle.dump(model, f)
+                model_path = f.name
+            
+            mlflow.log_artifact(model_path, "model")
+            print("✓ 模型已记录到MLflow")
+            
+            # Clean up temp file
+            os.unlink(model_path)
+            
+        except Exception as e:
+            print(f"⚠ 模型记录失败: {e}")
         
-        # Log scaler
-        mlflow.sklearn.log_model(scaler, "scaler")
+        # Log scaler using pickle
+        try:
+            import pickle
+            import tempfile
+            
+            # Save scaler as pickle file
+            with tempfile.NamedTemporaryFile(mode='wb', suffix='.pkl', delete=False) as f:
+                pickle.dump(scaler, f)
+                scaler_path = f.name
+            
+            mlflow.log_artifact(scaler_path, "scaler")
+            print("✓ 标准化器已记录到MLflow")
+            
+            # Clean up temp file
+            os.unlink(scaler_path)
+            
+        except Exception as e:
+            print(f"⚠ 标准化器记录失败: {e}")
         
         # Create and log confusion matrix
-        cm = confusion_matrix(y_test, y_pred)
-        cm_df = pd.DataFrame(cm, index=['Actual 0', 'Actual 1'], 
-                           columns=['Predicted 0', 'Predicted 1'])
-        cm_path = f"/tmp/confusion_matrix_{model_type}_{data_version}.csv"
-        cm_df.to_csv(cm_path)
-        mlflow.log_artifact(cm_path)
+        try:
+            import tempfile
+            
+            cm = confusion_matrix(y_test, y_pred)
+            cm_df = pd.DataFrame(cm, index=['Actual 0', 'Actual 1'], 
+                               columns=['Predicted 0', 'Predicted 1'])
+            
+            # Use tempfile instead of /tmp
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, encoding='utf-8') as f:
+                cm_df.to_csv(f.name, encoding='utf-8')
+                cm_path = f.name
+            
+            mlflow.log_artifact(cm_path)
+            print("✓ 混淆矩阵已记录")
+            
+            # Clean up temp file
+            os.unlink(cm_path)
+            
+        except Exception as e:
+            print(f"⚠ 混淆矩阵记录失败: {e}")
         
         # Log classification report
-        report = classification_report(y_test, y_pred, output_dict=True)
-        report_path = f"/tmp/classification_report_{model_type}_{data_version}.json"
-        with open(report_path, 'w') as f:
-            json.dump(report, f, indent=2)
-        mlflow.log_artifact(report_path)
+        try:
+            import tempfile
+            
+            report = classification_report(y_test, y_pred, output_dict=True)
+            
+            # Use tempfile instead of /tmp
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
+                json.dump(report, f, indent=2)
+                report_path = f.name
+            
+            mlflow.log_artifact(report_path)
+            print("✓ 分类报告已记录")
+            
+            # Clean up temp file
+            os.unlink(report_path)
+            
+        except Exception as e:
+            print(f"⚠ 分类报告记录失败: {e}")
         
         print(f"\n{model_type.upper()} Model Results:")
         print(f"Accuracy: {metrics['accuracy']:.4f}")
@@ -246,15 +309,23 @@ def train_with_mlflow(data_path, data_version, experiment_name, model_type="base
 
 def main():
     """Main function to run experiments"""
+    # 设置环境变量确保UTF-8编码
+    os.environ['PYTHONIOENCODING'] = 'utf-8'
+    
     load_dotenv()
+    
+    # 设置工作目录为项目根目录
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    os.chdir(project_root)
+    print(f"Working directory set to: {project_root}")
     
     print("=" * 60)
     print("MLOps Training Pipeline")
     print("=" * 60)
     
     # Data paths
-    v1_data = "../data/train_and_test2_v1.csv"
-    v2_data = "../data/train_and_test2_v2.csv"
+    v1_data = "data/train_and_test2_v1.csv"
+    v2_data = "data/train_and_test2_v2.csv"
     
     # Check if data versions exist
     if not os.path.exists(v1_data):
@@ -295,8 +366,8 @@ def main():
     for experiment, metrics in results.items():
         print(f"{experiment}: F1={metrics['f1_score']:.4f}, Acc={metrics['accuracy']:.4f}")
     
-    print(f"\nMLflow UI available at: file:///tmp/mlruns")
-    print("Use 'mlflow ui' to view detailed results")
+    print(f"\nMLflow UI available at: https://dagshub.com/whitecaptain2003/LastPro.mlflow/")
+    print("View your experiments and models on DAGsHub!")
 
 if __name__ == "__main__":
     main()
