@@ -66,9 +66,11 @@ jobs:
         
     - name: Initialize and demonstrate DVC
       run: |
+        # 清理可能存在的旧配置
+        rm -rf .dvc
         # 初始化DVC仓库
         dvc init --no-scm
         # 显示DVC状态
         dvc version
         dvc doctor
-        echo "DVC initialized successfully - this demonstrates DVC usage"
+        echo "DVC initialized successfully"
